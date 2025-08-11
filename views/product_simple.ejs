@@ -1,0 +1,12 @@
+<%- include('layout', { 
+    title: product.name,
+    body: `
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h1 class="text-2xl font-bold mb-2"><%= product.name %></h1>
+            <div class="text-3xl font-bold text-blue-600 mb-6">¥<%= product.price.toFixed(2) %></div>
+            <p class="text-gray-600 mb-4">型号: <%= product.model || '无' %></p>
+            <p class="text-gray-700 mb-6">库存: <%= product.quantity %></p>
+            <a href="/" class="text-blue-600 hover:text-blue-800">返回商品列表</a>
+        </div>
+    `
+}) %>

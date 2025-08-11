@@ -1,0 +1,28 @@
+<%- include('layout.ejs', { 
+  title: title || '商品列表', 
+  user: user, 
+  body: `
+        <h1 class="text-3xl font-bold mb-6 text-gray-800">商品列表</h1>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            ${products && products.length === 0 ? `
+                <div class="col-span-full text-center py-10">
+                    <p class="text-gray-500 text-lg">暂无商品，请稍后再来查看</p>
+                </div>
+            ` : products ? products.map(product => `
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+                    <div class="h-48 bg-gray-200 relative">
+                        <div class="absolute top-2 right-2 bg-blue-600 text-white text-sm px-2 py-1 rounded">
+                            ￥${product.price}
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg mb-1">${product.name}</h3>
+                        <p class="text-gray-500 text-sm mb-2">型号: ${product.model || '无'}</p>
+                        <p class="text-gray-600 text-sm mb-3 truncate">${product.description}</p>
+                    </div>
+                </div>
+            `).join('') : ''}
+        </div>
+    ` 
+}) %>

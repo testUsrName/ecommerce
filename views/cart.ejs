@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>购物车</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="/" class="text-xl font-bold text-blue-600">电商网站</a>
+            <div class="flex space-x-4">
+                <a href="/upload" class="text-gray-600 hover:text-blue-600">上传商品</a>
+                <a href="/cart" class="text-gray-600 hover:text-blue-600">购物车</a>
+                <a href="/orders" class="text-gray-600 hover:text-blue-600">我的订单</a>
+                <% if (user) { %>
+                    <span class="text-gray-600">欢迎, <%= user.username %></span>
+                    <a href="/users/logout" class="text-gray-600 hover:text-blue-600">退出</a>
+                <% } else { %>
+                    <a href="/users/login" class="text-gray-600 hover:text-blue-600">登录</a>
+                    <a href="/users/register" class="text-gray-600 hover:text-blue-600">注册</a>
+                <% } %>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区域 -->
+    <main class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800">购物车</h1>
+
+        <!-- 消息提示区域 -->
+        <% if (success_msg) { %>
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6" role="alert">
+                <span class="block sm:inline"><%= success_msg %></span>
+            </div>
+        <% } %>
+        <% if (error_msg) { %>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6" role="alert">
+                <span class="block sm:inline"><%= error_msg %></span>
+            </div>
+        <% } %>
+
+        <% if (typeof cart === 'undefined' || cart.length === 0) { %>
+            <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8 text-center">
+                <i class="fas fa-shopping-cart text-6xl text-gray-300 mb-4"></i>
+                <h3 class="text-xl font-semibold mb-2">购物车为空</h3>
+                <p class="text-gray-500 mb-6">您的购物车中没有商品</p>
+                <a href="/" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md transition inline-block">
+                    去购物
+                </a>
+            </div>
+        <% } else { %>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6 border border-gray-200 hover:shadow-lg transition">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 w-full" style="width: 100%; table-layout: fixed;">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" style="width: 40%;">商品信息</th>
+                                <th scope="col" class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" style="width: 15%;">单价</th>
+                                <th scope="col" class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" style="width: 20%;">数量</th>
+                                <th scope="col" class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" style="width: 15%;">小计</th>
+                                <th scope="col" class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" style="width: 10%;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <% cart.forEach((item, index) => { %>
+                                <tr class="<%= index % 2 === 0 ? 'bg-white' : 'bg-gray-50' %> hover:bg-gray-50 transition-all duration-300 border-b border-gray-100">
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <div class="ml-2">
+                                            <div class="text-base font-medium text-gray-800"><%= item.name %></div>
+                                            <div class="text-sm text-gray-500"><%= item.model %></div>
+                                            <% if (item.remark) { %>
+                                                <div class="text-xs text-gray-400 mt-1"><i class="fas fa-comment-alt mr-1"></i> <%= item.remark %></div>
+                                            <% } %>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        ¥<%= item.price.toFixed(2) %>
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <div class="flex items-center space-x-2 justify-center">
+                                            <button type="button" onclick="updateQuantity(<%= item.productId %>, <%= item.quantity - 1 %>)" class="text-blue-600 hover:text-blue-800 border border-gray-300 w-8 h-8 flex items-center justify-center rounded-md transition focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                -
+                                            </button>
+                                            <input type="number" value="<%= item.quantity %>" min="1" onchange="updateQuantity(<%= item.productId %>, this.value)" class="w-12 h-8 border border-gray-300 text-center rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            <button type="button" onclick="updateQuantity(<%= item.productId %>, <%= item.quantity + 1 %>)" class="text-blue-600 hover:text-blue-800 border border-gray-300 w-8 h-8 flex items-center justify-center rounded-md transition focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                +
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm font-bold text-blue-600">
+                                        ¥<%= (item.price * item.quantity).toFixed(2) %>
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <button type="button" onclick="removeFromCart(<%= item.productId %>)" class="text-red-600 hover:text-red-800 border border-gray-300 px-3 py-1.5 rounded-md transition focus:outline-none focus:ring-2 focus:ring-red-500">
+                                            移除
+                                        </button>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 flex flex-col md:flex-row justify-between items-start md:items-center border border-gray-200 hover:shadow-lg transition">
+                <div class="flex space-x-4 mb-4 md:mb-0">
+                    <button type="button" onclick="clearCart()" class="inline-flex items-center px-4 py-2 text-red-600 hover:text-red-800 border border-gray-300 rounded-md transition focus:outline-none focus:ring-2 focus:ring-red-500">
+                        <i class="fas fa-trash-alt mr-2"></i> 清空购物车
+                    </button>
+                    <a href="/" class="inline-flex items-center px-4 py-2 text-green-600 hover:text-green-800 border border-gray-300 rounded-md transition focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <i class="fas fa-shopping-bag mr-2"></i> 继续购物
+                    </a>
+                </div>
+                <div class="text-right">
+                    <p class="text-xl font-bold text-gray-900 mb-3">
+                        总计: <span class="text-2xl text-blue-600">¥<%= cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2) %></span>
+                    </p>
+                    <button type="button" onclick="generateOrder()" class="inline-flex items-center px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm font-medium">
+                        <i class="fas fa-file-invoice mr-2"></i> 生成订单
+                    </button>
+                </div>
+            </div>
+        <% } %>
+    </main>
+
+    <!-- 脚本 -->
+    <script>
+    // 更新商品数量
+    function updateQuantity(productId, quantity) {
+        if (quantity < 1) quantity = 1;
+        
+        fetch('/cart/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `productId=${productId}&quantity=${quantity}`
+        }).then(response => {
+            window.location.reload();
+        }).catch(error => {
+            console.error('更新数量失败:', error);
+            alert('更新数量失败，请重试');
+        });
+    }
+
+    // 从购物车移除商品
+    function removeFromCart(productId) {
+        if (confirm('确定要移除该商品吗？')) {
+            fetch('/cart/remove', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `productId=${productId}`
+            }).then(response => {
+                window.location.reload();
+            }).catch(error => {
+                console.error('移除商品失败:', error);
+                alert('移除商品失败，请重试');
+            });
+        }
+    }
+
+    // 清空购物车
+    function clearCart() {
+        if (confirm('确定要清空购物车吗？')) {
+            fetch('/cart/clear', {
+                method: 'POST'
+            }).then(response => {
+                window.location.reload();
+            }).catch(error => {
+                console.error('清空购物车失败:', error);
+                alert('清空购物车失败，请重试');
+            });
+        }
+    }
+
+    // 生成订单
+    function generateOrder() {
+        // 检查用户是否已登录
+        const isLoggedIn = <%= user ? 'true' : 'false' %>;
+        if (!isLoggedIn) {
+            alert('请先登录再生成订单PDF');
+            window.location.href = '/login';
+            return;
+        }
+        
+        if (confirm('确认生成订单PDF文档吗？')) {
+            // 显示加载中提示
+            alert('正在生成PDF文档，请稍候...');
+            
+            // 检查购物车是否为空
+            alert('购物车商品数量: ' + <%= cart.length %>);
+            
+            // 调用生成PDF的API
+            alert('即将发送请求到: /cart/generate-pdf');
+            
+            // 记录请求发送前的时间
+            const startTime = new Date().getTime();
+            
+            fetch('/cart/generate-pdf', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'same-origin' // 确保携带Cookie
+            }).then(response => {
+                // 记录请求完成时间
+                const endTime = new Date().getTime();
+                alert('请求完成，耗时: ' + (endTime - startTime) + 'ms');
+                
+                // 输出响应状态码和状态文本
+                alert('响应状态码: ' + response.status + ', 状态文本: ' + response.statusText);
+                
+                // 输出完整URL
+                alert('请求URL: ' + response.url);
+                alert('11111');
+                // 输出响应状态码和状态文本
+                alert('响应状态码: ' + response.status + ', 状态文本: ' + response.statusText);
+                // 输出响应头
+                response.headers.forEach((value, key) => {
+                    console.log(key + ': ' + value);
+                });
+                
+                if (response.ok) {
+                    // 先检查响应类型
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/pdf')) {
+                        alert('正要创建链接，请稍候...');
+                        // 创建一个下载链接
+                        response.blob().then(blob => {
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = '订单_' + new Date().getTime() + '.pdf';
+                            document.body.appendChild(a);
+                            a.click();
+                            
+                            // 清理
+                            a.remove();
+                            window.URL.revokeObjectURL(url);
+                            
+                            alert('PDF文档已生成并下载！');
+                            window.location.reload();
+                        }).catch(error => {
+                            console.error('处理PDF blob失败:', error);
+                            alert('生成PDF失败: 处理响应数据时出错');
+                        });
+                    } else {
+                        alert('生成PDF失败: 服务器返回了非PDF格式的响应');
+                        // 尝试获取错误信息
+                        response.json().then(data => {
+                            if (data.message) {
+                                alert('错误信息: ' + data.message);
+                            }
+                        }).catch(() => {
+                            // 如果不是JSON响应
+                            response.text().then(text => {
+                                alert('服务器响应: ' + text);
+                            });
+                        });
+                    }
+                } else {
+                    alert('生成PDF失败: 服务器返回错误状态码 ' + response.status);
+                    // 尝试获取错误信息
+                    response.json().then(data => {
+                        if (data.message) {
+                            alert('错误信息: ' + data.message);
+                        }
+                    }).catch(() => {
+                        // 如果不是JSON响应
+                        response.text().then(text => {
+                            alert('服务器响应: ' + text);
+                        });
+                    });
+                }
+            }).catch(error => {
+                console.error('生成PDF失败:', error);
+                alert('生成PDF失败，请重试');
+            });
+        }
+    }
+    </script>
+
+    <!-- 页脚 -->
+    <footer class="bg-white shadow-inner py-6 mt-10">
+        <div class="container mx-auto px-4 text-center text-gray-600">
+            <p>&copy; 2023 电商网站. 保留所有权利.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .cart { border: 1px solid #ddd; padding: 10px; margin-bottom: 20px; }
+        .cart-item { border-bottom: 1px solid #eee; padding: 10px 0; }
+        .add-form { border: 1px solid #ddd; padding: 20px; }
+        input, button { margin: 5px 0; padding: 8px; }
+    </style>
+</head>
+<body>
+    <h1><%= title %></h1>
+
+    <div class="cart">
+        <h2>购物车内容</h2>
+        <% if (cart.length === 0) { %>
+            <p>购物车为空</p>
+        <% } else { %>
+            <% cart.forEach(function(item, index) { %>
+                <div class="cart-item">
+                    <p>商品: <%= item.name %></p>
+                    <p>单价: ¥<%= item.price.toFixed(2) %></p>
+                    <p>数量: <%= item.quantity %></p>
+                    <p>小计: ¥<%= (item.price * item.quantity).toFixed(2) %></p>
+                </div>
+            <% }) %>
+            <p>总计: ¥<%= cart.reduce(function(total, item) { return total + (item.price * item.quantity); }, 0).toFixed(2) %></p>
+            <form action="/clear" method="POST">
+                <button type="submit">清空购物车</button>
+            </form>
+        <% } %>
+    </div>
+
+    <div class="add-form">
+        <h2>添加商品</h2>
+        <form id="add-to-cart-form" action="/add" method="POST">
+            <div>
+                <label for="name">商品名称:</label>
+                <input type="text" id="name" name="name" value="测试商品">
+            </div>
+            <div>
+                <label for="price">价格:</label>
+                <input type="number" id="price" name="price" step="0.01" value="10.99">
+            </div>
+            <div>
+                <label for="quantity">数量:</label>
+                <input type="number" id="quantity" name="quantity" min="1" value="1">
+            </div>
+            <button type="submit">添加到购物车</button>
+        </form>
+    </div>
+
+    <script>
+        // 为表单添加提交事件监听器
+        document.getElementById('add-to-cart-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            
+            console.log('表单数据:', data);
+            
+            fetch('/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams(data)
+            })
+            .then(response => {
+                console.log('响应状态:', response.status);
+                return response.text();
+            })
+            .then(html => {
+                console.log('响应内容:', html);
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('添加到购物车失败:', error);
+                alert('添加到购物车失败，请稍后再试。');
+            });
+        });
+    </script>
+</body>
+</html>

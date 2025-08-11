@@ -1,0 +1,110 @@
+<%- include('layout', { 
+    title: '购物车',
+    cart: cart,
+    body: `
+        <h1 class="text-3xl font-bold mb-6 text-gray-800">购物车</h1>
+        
+        <% if (cart.length === 0) { %>
+            <div class="bg-white rounded-lg shadow-md p-8 text-center">
+                <i class="fas fa-shopping-cart text-6xl text-gray-300 mb-4"></i>
+                <h2 class="text-xl font-semibold mb-2">购物车是空的</h2>
+                <p class="text-gray-500 mb-6">快去添加一些商品吧！</p>
+                <a href="/" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md transition inline-block">
+                    浏览商品
+                </a>
+            </div>
+        <% } else { %>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">商品</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">型号</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">单价</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">数量</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">小计</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <% cart.forEach(item => { %>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="h-10 w-10 flex-shrink-0">
+                                            <% if (item.image_url) { %>
+                                                <img class="h-10 w-10 object-cover" src="<%= item.image_url %>" alt="<%= item.name %>">
+                                            <% } else { %>
+                                                <div class="h-10 w-10 bg-gray-200 flex items-center justify-center">
+                                                    <i class="fas fa-box text-gray-400"></i>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900"><%= item.name %></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-500"><%= item.model || '无' %></div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">¥<%= item.price.toFixed(2) %></div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <button onclick="updateCartItem(<%= item.productId %>, <%= item.quantity - 1 %>)" 
+                                            class="bg-gray-200 hover:bg-gray-300 rounded-l-md px-2 py-1" <%= item.quantity <= 1 ? 'disabled' : '' %>>
+                                            <i class="fas fa-minus text-sm"></i>
+                                        </button>
+                                        <input type="number" value="<%= item.quantity %>" min="1" 
+                                            onchange="updateCartItem(<%= item.productId %>, this.value)"
+                                            class="w-12 border-y border-gray-300 px-2 py-1 text-center focus:outline-none">
+                                        <button onclick="updateCartItem(<%= item.productId %>, <%= item.quantity + 1 %>)" 
+                                            class="bg-gray-200 hover:bg-gray-300 rounded-r-md px-2 py-1">
+                                            <i class="fas fa-plus text-sm"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">¥<%= (item.price * item.quantity).toFixed(2) %></div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <button onclick="removeFromCart(<%= item.productId %>)" 
+                                        class="text-red-600 hover:text-red-900">
+                                        <i class="fas fa-trash-alt"></i> 移除
+                                    </button>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="flex flex-col md:flex-row justify-between items-end">
+                <div class="mb-4 md:mb-0">
+                    <button onclick="clearCart()" class="text-red-600 hover:text-red-900 mr-6">
+                        <i class="fas fa-trash mr-1"></i> 清空购物车
+                    </button>
+                    <a href="/" class="text-blue-600 hover:text-blue-900">
+                        <i class="fas fa-arrow-left mr-1"></i> 继续购物
+                    </a>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-md p-6 w-full md:w-auto">
+                    <div class="flex justify-between mb-4 pb-4 border-b border-gray-200">
+                        <span class="text-lg font-medium text-gray-700">总计</span>
+                        <span class="text-2xl font-bold text-gray-900">
+                            ¥<%= cart.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2) %>
+                        </span>
+                    </div>
+                    <form action="/cart/checkout" method="POST">
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-md transition text-lg font-medium">
+                            <i class="fas fa-lock mr-2"></i> 结算
+                        </button>
+                    </form>
+                </div>
+            </div>
+        <% } %>
+    `
+}) %>

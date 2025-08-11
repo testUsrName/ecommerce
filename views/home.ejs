@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品列表</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="/" class="text-xl font-bold text-blue-600">电商网站</a>
+            <div class="flex space-x-4">
+                <a href="/upload" class="text-gray-600 hover:text-blue-600">上传商品</a>
+                <a href="/cart" class="text-gray-600 hover:text-blue-600">购物车</a>
+                <a href="/orders" class="text-gray-600 hover:text-blue-600">我的订单</a>
+                <% if (user) { %>
+                    <span class="text-gray-600">欢迎, <%= user.username %></span>
+                    <a href="/users/logout" class="text-gray-600 hover:text-blue-600">退出</a>
+                <% } else { %>
+                    <a href="/users/login" class="text-gray-600 hover:text-blue-600">登录</a>
+                    <a href="/users/register" class="text-gray-600 hover:text-blue-600">注册</a>
+                <% } %>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区域 -->
+    <main class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800">商品列表</h1>
+
+        <!-- 消息提示区域 -->
+        <% if (success_msg) { %>
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6" role="alert">
+                <span class="block sm:inline"><%= success_msg %></span>
+            </div>
+        <% } %>
+        <% if (error_msg) { %>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6" role="alert">
+                <span class="block sm:inline"><%= error_msg %></span>
+            </div>
+        <% } %>
+
+        <!-- 商品列表 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <% if (products.length === 0) { %>
+                <div class="col-span-full text-center py-10">
+                    <p class="text-gray-500 text-lg">暂无商品，请稍后再来查看</p>
+                </div>
+            <% } else { %>
+                <% products.forEach(product => { %>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+                        <div class="h-48 bg-gray-200 relative group cursor-default">
+                            <% if (product.image_url) { %>
+                                <img src="<%= product.image_url %>" alt="<%= product.name %>" class="w-full h-full object-cover" title="<%= product.description %>">
+                            <% } else { %>
+                                <div class="w-full h-full flex items-center justify-center" title="<%= product.description %>">
+                                    <i class="fas fa-box text-5xl text-gray-400"></i>
+                                </div>
+                            <% } %>
+                            <div class="absolute top-2 right-2 bg-blue-600 text-white text-sm px-2 py-1 rounded">
+                                ¥<%= product.price.toFixed(2) %>
+                            </div>
+                            <!-- 悬停显示描述 -->
+                            <div class="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4">
+                                <p class="text-white text-sm"><%= product.description %></p>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-semibold text-lg mb-1"><%= product.name %></h3>
+                            <p class="text-gray-500 text-sm mb-2">型号: <%= product.model || '无' %></p>
+                            <div class="mt-4">
+                                <div class="flex items-center mb-2">
+                                    <span class="text-sm text-gray-500 mr-2">库存: <%= product.quantity %></span>
+                                    <span class="text-sm text-gray-500">购买数量:</span>
+                                    <input type="number" id="quantity-<%= product.id %>" value="1" min="1" max="<%= product.quantity %>" class="ml-2 w-16 border border-gray-300 rounded px-2 py-1 text-sm">
+                                </div>
+                                <div class="flex space-x-2 mb-2">
+                                    <button onclick="addToCart(<%= product.id %>)" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 rounded transition">
+                                        <i class="fas fa-shopping-cart mr-1"></i> 添加到购物车
+                                    </button>
+                                    <button onclick="openRemarkModal(<%= product.id %>)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm py-2 px-3 rounded transition">
+                                        <i class="fas fa-comment-alt mr-1"></i> 备注
+                                    </button>
+                                </div>
+                                <a href="/products/<%= product.id %>" class="block text-center text-blue-600 hover:text-blue-800 text-sm font-medium mt-2">
+                                    <i class="fas fa-info-circle mr-1"></i> 查看详情
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } %>
+        </div>
+    </main>
+
+    <!-- 备注模态框 -->
+    <div id="remarkModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">添加备注</h3>
+                <button onclick="closeRemarkModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <input type="hidden" id="modalProductId">
+            <div class="mb-4">
+                <label for="remarkText" class="block text-sm font-medium text-gray-700 mb-1">备注内容</label>
+                <textarea id="remarkText" rows="3" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="输入备注信息..."></textarea>
+            </div>
+            <div class="flex justify-end space-x-2">
+                <button onclick="closeRemarkModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded transition">取消</button>
+                <button onclick="saveRemark()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition">保存备注</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加购物车脚本 -->
+    <script>
+        // 存储商品备注
+        const productRemarks = {};
+
+        // 打开备注模态框
+        function openRemarkModal(productId) {
+            document.getElementById('modalProductId').value = productId;
+            document.getElementById('remarkText').value = productRemarks[productId] || '';
+            document.getElementById('remarkModal').classList.remove('hidden');
+        }
+
+        // 关闭备注模态框
+        function closeRemarkModal() {
+            document.getElementById('remarkModal').classList.add('hidden');
+        }
+
+        // 保存备注
+        function saveRemark() {
+            const productId = document.getElementById('modalProductId').value;
+            const remark = document.getElementById('remarkText').value;
+            productRemarks[productId] = remark;
+            closeRemarkModal();
+        }
+
+        // 添加到购物车
+        function addToCart(productId) {
+            const quantity = document.getElementById(`quantity-${productId}`).value;
+            const remark = productRemarks[productId] || '';
+            
+            // 发送POST请求到购物车添加接口
+            fetch('/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `productId=${productId}&quantity=${quantity}&remark=${encodeURIComponent(remark)}`
+            })
+            .then(response => response.text())
+            .then(html => {
+                // 刷新页面以显示更新后的购物车和消息
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('添加到购物车失败:', error);
+                alert('添加到购物车失败，请稍后再试。');
+            });
+        }
+    </script>
+
+    <!-- 页脚 -->
+    <footer class="bg-white shadow-inner py-6 mt-10">
+        <div class="container mx-auto px-4 text-center text-gray-600">
+            <p>&copy; 2023 电商网站. 保留所有权利.</p>
+        </div>
+    </footer>
+</body>
+</html>

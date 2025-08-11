@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="/" class="text-xl font-bold text-blue-600">电商网站</a>
+            <div class="flex space-x-4">
+                <a href="/upload" class="text-gray-600 hover:text-blue-600">上传商品</a>
+                <a href="/cart" class="text-gray-600 hover:text-blue-600">购物车</a>
+                <a href="/orders" class="text-gray-600 hover:text-blue-600">我的订单</a>
+                <% if (user) { %>
+                    <span class="text-gray-600">欢迎, <%= user.username %></span>
+                    <a href="/users/logout" class="text-gray-600 hover:text-blue-600">退出</a>
+                <% } else { %>
+                    <a href="/users/login" class="text-gray-600 hover:text-blue-600">登录</a>
+                    <a href="/users/register" class="text-gray-600 hover:text-blue-600">注册</a>
+                <% } %>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区域 -->
+    <main class="container mx-auto px-4 py-8">
+        <%- body %>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-white shadow-inner py-6 mt-12">
+        <div class="container mx-auto px-4 text-center text-gray-600">
+            <p>&copy; <%= new Date().getFullYear() %> 电商网站 - 版权所有</p>
+        </div>
+    </footer>
+</body>
+</html>

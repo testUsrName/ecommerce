@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title || '电子商务网站' %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <!-- 导航栏 -->
+    <header class="bg-blue-600 text-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="/" class="text-2xl font-bold">商品商城</a>
+            
+            <nav class="hidden md:flex space-x-6">
+                <a href="/" class="hover:text-blue-200 transition">首页</a>
+                <a href="/orders" class="hover:text-blue-200 transition">我的订单</a>
+                <% if (user) { %>
+                    <a href="/upload" class="hover:text-blue-200 transition">上传商品</a>
+                    <a href="/users/logout" class="hover:text-blue-200 transition">退出登录</a>
+                    <span class="text-sm">欢迎, <%= user.username %></span>
+                <% } else { %>
+                    <a href="/users/login" class="hover:text-blue-200 transition">登录</a>
+                    <a href="/users/register" class="hover:text-blue-200 transition">注册</a>
+                <% } %>
+                <a href="/cart" class="relative hover:text-blue-200 transition">
+                    <i class="fas fa-shopping-cart text-xl"></i>
+                    <% if (typeof cart !== 'undefined' && cart.length > 0) { %>
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                            <%= cart.reduce((total, item) => total + item.quantity, 0) %>
+                        </span>
+                    <% } %>
+                </a>
+            </nav>
+            
+            <!-- 移动端菜单按钮 -->
+            <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+        </div>
+        
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="md:hidden hidden bg-blue-700 px-4 py-2">
+            <div class="flex flex-col space-y-3 py-2">
+                <a href="/" class="hover:text-blue-200 transition">首页</a>
+                <a href="/orders" class="hover:text-blue-200 transition">我的订单</a>
+                <% if (user) { %>
+                    <a href="/upload" class="hover:text-blue-200 transition">上传商品</a>
+                    <a href="/users/logout" class="hover:text-blue-200 transition">退出登录</a>
+                    <span class="text-sm">欢迎, <%= user.username %></span>
+                <% } else { %>
+                    <a href="/users/login" class="hover:text-blue-200 transition">登录</a>
+                    <a href="/users/register" class="hover:text-blue-200 transition">注册</a>
+                <% } %>
+                <a href="/cart" class="relative hover:text-blue-200 transition">
+                    <i class="fas fa-shopping-cart"></i> 购物车
+                    <% if (typeof cart !== 'undefined' && cart.length > 0) { %>
+                        <span class="absolute left-16 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                            <%= cart.reduce((total, item) => total + item.quantity, 0) %>
+                        </span>
+                    <% } %>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 消息提示 -->
+    <div class="container mx-auto px-4 py-2">
+        <% if (success_msg) { %>
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                <%= success_msg %>
+                <button class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="this.parentElement.style.display='none'">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        <% } %>
+        <% if (error_msg) { %>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <%= error_msg %>
+                <button class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="this.parentElement.style.display='none'">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- 主要内容 -->
+    <main class="flex-grow container mx-auto px-4 py-6">
+        <%= body %>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto px-4">
+            <div class="text-center">
+                <p>&copy; <%= new Date().getFullYear() %> 商品商城. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 移动端菜单切换
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // 购物车数量更新
+        function updateCartItem(productId, quantity) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/cart/update';
+            
+            const input1 = document.createElement('input');
+            input1.type = 'hidden';
+            input1.name = 'productId';
+            input1.value = productId;
+            
+            const input2 = document.createElement('input');
+            input2.type = 'hidden';
+            input2.name = 'quantity';
+            input2.value = quantity;
+            
+            form.appendChild(input1);
+            form.appendChild(input2);
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        // 从购物车移除商品
+        function removeFromCart(productId) {
+            if (confirm('确定要从购物车中移除这个商品吗?')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/cart/remove';
+                
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'productId';
+                input.value = productId;
+                
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        // 清空购物车
+        function clearCart() {
+            if (confirm('确定要清空购物车吗?')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/cart/clear';
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
+</body>
+</html>

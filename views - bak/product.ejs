@@ -1,0 +1,57 @@
+<%- include('layout', { 
+    title: product.name,
+    body: `
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="md:flex">
+                <div class="md:w-1/2 p-4">
+                    <div class="bg-gray-200 rounded-lg h-80 flex items-center justify-center">
+                        <% if (product.image_url) { %>
+                            <img src="<%= product.image_url %>" alt="<%= product.name %>" class="max-w-full max-h-full object-contain">
+                        <% } else { %>
+                            <i class="fas fa-box text-8xl text-gray-400"></i>
+                        <% } %>
+                    </div>
+                </div>
+                <div class="md:w-1/2 p-6">
+                    <h1 class="text-2xl font-bold mb-2"><%= product.name %></h1>
+                    <p class="text-gray-600 mb-4">型号: <%= product.model || '无' %></p>
+                    <div class="text-3xl font-bold text-blue-600 mb-6">¥<%= product.price.toFixed(2) %></div>
+                    
+                    <div class="mb-6">
+                        <h2 class="text-lg font-semibold mb-2">商品描述</h2>
+                        <p class="text-gray-700 whitespace-pre-line"><%= product.description || '无' %></p>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h2 class="text-lg font-semibold mb-2">备注</h2>
+                        <p class="text-gray-700 whitespace-pre-line"><%= product.notes || '无' %></p>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-medium text-gray-700">
+                            库存: <%= product.quantity %>
+                        </span>
+                    </div>
+                    
+                    <% if (product.quantity > 0) { %>
+                        <form action="/cart/add" method="POST" class="flex items-center">
+                            <input type="hidden" name="productId" value="<%= product.id %>">
+                            <div class="mr-4">
+                                <label for="quantity" class="block text-sm font-medium text-gray-700 mb-1">数量</label>
+                                <input type="number" id="quantity" name="quantity" value="1" min="1" max="<%= product.quantity %>" 
+                                    class="w-20 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md transition">
+                                <i class="fas fa-shopping-cart mr-2"></i>加入购物车
+                            </button>
+                        </form>
+                    <% } else { %>
+                        <button disabled class="bg-gray-400 text-white px-6 py-2 rounded-md cursor-not-allowed">
+                            <i class="fas fa-exclamation-circle mr-2"></i>已售罄
+                        </button>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    `
+}) %>
