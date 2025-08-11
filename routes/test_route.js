@@ -1,8 +1,8 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const ejs = require('ejs');
-const path = require('path');
-const Product = require('../models/product');
+import ejs from 'ejs';
+import path from 'path';
+import Product from '../models/product.js';
 
 // 测试路由 - 直接使用ejs.renderFile
 router.get('/products/:id', (req, res) => {
@@ -38,4 +38,4 @@ router.get('/products/:id', (req, res) => {
   });
 });
 
-module.exports = router;
+export default router;

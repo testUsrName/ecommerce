@@ -1,5 +1,5 @@
-const { db } = require('./db');
-const bcrypt = require('bcryptjs');
+import bcrypt from 'bcryptjs';
+import { db } from './db.js';
 
 // 用户模型
 const User = {
@@ -40,4 +40,4 @@ const User = {
   }
 };
 
-module.exports = User;
+export default User;

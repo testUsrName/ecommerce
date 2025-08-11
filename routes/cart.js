@@ -1,30 +1,15 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const Product = require('../models/product');
-const Order = require('../models/order');
-const ejs = require('ejs');
-const path = require('path');
-const fs = require('fs');
-const { promisify } = require('util');
-const { jsPDF } = require('jspdf');
+import Product from '../models/product.js';
+import Order from '../models/order.js';
+import ejs from 'ejs';
+import path from 'path';
+import fs from 'fs';
+import { promisify } from 'util';
+import jsPDF from 'jspdf';
 // 引入中文字体支持
-const fonts = {
-  simsun: {
-    normal: 'simsun.ttf',
-    bold: 'simsunb.ttf',
-    italic: 'simsuni.ttf',
-    bolditalic: 'simsunbi.ttf'
-  }
-};
-// 注册字体
-jsPDF.API.addFileToVFS('simsun.ttf', '');
-jsPDF.API.addFileToVFS('simsunb.ttf', '');
-jsPDF.API.addFileToVFS('simsuni.ttf', '');
-jsPDF.API.addFileToVFS('simsunbi.ttf', '');
-jsPDF.API.addFont('simsun.ttf', 'simsun', 'normal');
-jsPDF.API.addFont('simsunb.ttf', 'simsun', 'bold');
-jsPDF.API.addFont('simsuni.ttf', 'simsun', 'italic');
-jsPDF.API.addFont('simsunbi.ttf', 'simsun', 'bolditalic');
+// 注意：在服务器端使用jsPDF时，字体配置需要特殊处理
+// 我们将在生成PDF时直接设置字体
 const readFileAsync = promisify(fs.readFile);
 
 // 初始化购物车
@@ -247,8 +232,9 @@ router.post('/generate-pdf', async (req, res) => {
       format: 'a4'
     });
 
-    // 设置中文字体
-    doc.setFont('simsun', 'normal');
+    // 注意：在服务器端使用jsPDF时，中文字体支持需要特殊处理
+    // 这里我们使用默认字体，实际项目中可能需要额外配置
+    // doc.setFont('simsun', 'normal');
 
     // 添加标题
     doc.setFontSize(20);
@@ -320,6 +306,4 @@ router.post('/generate-pdf', async (req, res) => {
     }
   });
 // 原代码此处的单个 } 可能是多余的，已移除。下面正常导出路由
-module.exports = router;
-
-module.exports = router;
+export default router;

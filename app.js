@@ -1,13 +1,19 @@
-const express = require('express');
-const session = require('express-session');
-const flash = require('connect-flash');
-const path = require('path');
-const multer = require('multer');
-const fs = require('fs');
+import express from 'express';
+import { fileURLToPath } from 'url';
+import path from 'path';
+import session from 'express-session';
+import flash from 'connect-flash';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+import multer from 'multer';
+import fs from 'fs';
+import i18n from './config/i18n.js';
+import cookieParser from 'cookie-parser';
 
 // 初始化数据库
-const db = require('./models/db');
-db.init();
+import { db, init } from './models/db.js';
+init();
 
 // 创建上传目录
 const uploadDir = path.join(__dirname, 'public', 'uploads');
@@ -43,6 +49,7 @@ app.set('view cache', false);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cookieParser());
 app.use(session({
   secret: 'secret',
   resave: false,
@@ -61,27 +68,69 @@ app.use(flash());
 // 全局变量
 app.use(function(req, res, next) {
   // 确保即使flash消息为null或undefined，也会被设置为空字符串
+  next();
+});
+
+// 全局变量
+app.use(function(req, res, next) {
+  // 确保即使flash消息为null或undefined，也会被设置为空字符串
   res.locals.success_msg = req.flash('success_msg') || '';
   res.locals.error_msg = req.flash('error_msg') || '';
   res.locals.error = req.flash('error') || '';
   res.locals.user = req.session.user || null;
+  // 当前语言
+  res.locals.currentLang = req.cookies.lang || 'zh';
+  next();
+});
+
+// i18n中间件
+app.use(i18n.init);
+
+// 语言切换路由
+app.get('/lang/:locale', (req, res) => {
+  res.cookie('lang', req.params.locale);
+  res.redirect('back');
+});
+
+// i18n中间件
+app.use(i18n.init);
+
+// 手动添加i18n的t函数到请求对象
+app.use(function(req, res, next) {
+  if (!req.t) {
+    req.t = function(key) {
+      return i18n.__({ phrase: key, locale: req.cookies.lang || 'zh' });
+    };
+  }
+  res.locals.t = req.t;
   next();
 });
 
 // 路由
-app.use('/', require('./routes/index'));
-app.use('/products', require('./routes/products'));
-app.use('/test', require('./routes/test_route'));
-app.use('/test-cart', require('./routes/test_cart'));
-app.use('/cart', require('./routes/cart'));
-app.use('/orders', require('./routes/orders'));
-app.use('/users', require('./routes/users'));
-app.use('/session-test', require('./routes/session_test'));
+import testI18nRouter from './routes/test_i18n.js';
+import indexRouter from './routes/index.js';
+import productsRouter from './routes/products.js';
+import testRouter from './routes/test_route.js';
+import testCartRouter from './routes/test_cart.js';
+import cartRouter from './routes/cart.js';
+import ordersRouter from './routes/orders.js';
+import usersRouter from './routes/users.js';
+import sessionTestRouter from './routes/session_test.js';
+
+app.use('/test-i18n', testI18nRouter);
+app.use('/', indexRouter);
+app.use('/products', productsRouter);
+app.use('/test', testRouter);
+app.use('/test-cart', testCartRouter);
+app.use('/cart', cartRouter);
+app.use('/orders', ordersRouter);
+app.use('/users', usersRouter);
+app.use('/session-test', sessionTestRouter);
 
 // 商品上传路由（需要登录）
-const productController = require('./controllers/productController');
-app.get('/upload', isAuthenticated, productController.getUploadForm);
-app.post('/upload', isAuthenticated, upload.single('image'), productController.uploadProduct);
+import { getUploadForm, uploadProduct } from './controllers/productController.js';
+app.get('/upload', isAuthenticated, getUploadForm);
+  app.post('/upload', isAuthenticated, upload.single('image'), uploadProduct);
 
 // 检查用户是否登录的中间件
 function isAuthenticated(req, res, next) {
@@ -98,7 +147,7 @@ app.listen(PORT, () => {
 });
 
 // 自定义EJS模板编译错误处理中间件
-const ejs = require('ejs');
+import ejs from 'ejs';
 
 // 移除EJS的renderFile方法覆盖，使用默认实现
 

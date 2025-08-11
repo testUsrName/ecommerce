@@ -1,0 +1,25 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "products": "Produits",
+    "cart": "Panier",
+    "admin": "Admin",
+    "login": "Connexion",
+    "register": "Inscription",
+    "logout": "Déconnexion",
+    "upload": "Télécharger un produit",
+    "orders": "Mes commandes",
+    "welcome": "Bienvenue"
+  },
+  "header": {
+    "welcome": "Bienvenue dans notre magasin"
+  },
+  "footer": {
+    "copyright": "Site de commerce électronique. Tous droits réservés."
+  },
+  "language": {
+    "zh": "Chinois",
+    "en": "Anglais",
+    "fr": "Français"
+  }
+}

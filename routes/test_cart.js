@@ -1,7 +1,7 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const ejs = require('ejs');
-const path = require('path');
+import ejs from 'ejs';
+import path from 'path';
 
 // 测试购物车模板渲染
 router.get('/', (req, res) => {
@@ -84,4 +84,4 @@ router.get('/view', (req, res) => {
   res.json(req.session.cart);
 });
 
-module.exports = router;
+export default router;

@@ -1,6 +1,6 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const Product = require('../models/product');
+import Product from '../models/product.js';
 
 // 首页路由 - 使用新模板
 router.get('/', async (req, res) => {
@@ -57,4 +57,4 @@ router.get('/simple-index', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

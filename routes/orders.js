@@ -1,9 +1,9 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const Order = require('../models/order');
-const fs = require('fs');
-const path = require('path');
-const { jsPDF } = require('jspdf');
+import Order from '../models/order.js';
+import fs from 'fs';
+import path from 'path';
+import { jsPDF } from 'jspdf';
 
 // 所有订单
 router.get('/', (req, res) => {
@@ -130,4 +130,4 @@ router.get('/:id/export/csv', (req, res) => {
   });
 });
 
-module.exports = router;
+export default router;

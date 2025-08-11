@@ -1,4 +1,4 @@
-const { db } = require('./db');
+import { db } from './db.js';
 
 // 订单模型
 const Order = {
@@ -75,4 +75,4 @@ const Order = {
   }
 };
 
-module.exports = Order;
+export default Order;

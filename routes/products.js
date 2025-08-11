@@ -1,8 +1,8 @@
-const express = require('express');
-const ejs = require('ejs');
-const path = require('path');
+import express from 'express';
+import ejs from 'ejs';
+import path from 'path';
 const router = express.Router();
-const Product = require('../models/product');
+import Product from '../models/product.js';
 
 // 获取商品详情
 router.get('/:id', (req, res) => {
@@ -31,4 +31,4 @@ router.get('/:id', (req, res) => {
     });
 });
 
-module.exports = router;
+export default router;

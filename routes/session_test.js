@@ -1,4 +1,4 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 
 // 测试会话设置
@@ -31,4 +31,4 @@ router.get('/get-cart', (req, res) => {
   res.send('购物车数据: ' + JSON.stringify(req.session.cart || []));
 });
 
-module.exports = router;
+export default router;

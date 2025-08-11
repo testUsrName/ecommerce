@@ -1,4 +1,4 @@
-const { db } = require('./db');
+import { db } from './db.js';
 
 // 商品模型
 const Product = {
@@ -57,4 +57,4 @@ const Product = {
   }
 };
 
-module.exports = Product;
+export default Product;

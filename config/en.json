@@ -1,0 +1,25 @@
+{
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "cart": "Cart",
+    "admin": "Admin",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "upload": "Upload Product",
+    "orders": "My Orders",
+    "welcome": "Welcome"
+  },
+  "header": {
+    "welcome": "Welcome to our store"
+  },
+  "footer": {
+    "copyright": "E-commerce Website. All rights reserved."
+  },
+  "language": {
+    "zh": "Chinese",
+    "en": "English",
+    "fr": "French"
+  }
+}

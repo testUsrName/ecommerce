@@ -1,0 +1,25 @@
+{
+  "nav": {
+    "home": "首页",
+    "products": "商品",
+    "cart": "购物车",
+    "admin": "管理员",
+    "login": "登录",
+    "register": "注册",
+    "logout": "退出",
+    "upload": "上传商品",
+    "orders": "我的订单",
+    "welcome": "欢迎"
+  },
+  "header": {
+    "welcome": "欢迎来到我们的商店"
+  },
+  "footer": {
+    "copyright": "电商网站. 保留所有权利."
+  },
+  "language": {
+    "zh": "中文",
+    "en": "英语",
+    "fr": "法语"
+  }
+}

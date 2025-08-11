@@ -1,6 +1,6 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const User = require('../models/user');
+import User from '../models/user.js';
 
 // 登录页面
 router.get('/login', (req, res) => {
@@ -107,4 +107,4 @@ router.get('/logout', (req, res) => {
   });
 });
 
-module.exports = router;
+export default router;

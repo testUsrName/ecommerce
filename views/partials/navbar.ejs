@@ -1,0 +1,30 @@
+<!-- 导航栏 -->
+<nav class="bg-white shadow-md">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <a href="/" class="text-xl font-bold text-blue-600">电商网站</a>
+        <div class="flex space-x-4">
+            <a href="/upload" class="text-gray-600 hover:text-blue-600"><%= t('nav.upload') %></a>
+            <a href="/cart" class="text-gray-600 hover:text-blue-600"><%= t('nav.cart') %></a>
+            <a href="/orders" class="text-gray-600 hover:text-blue-600"><%= t('nav.orders') %></a>
+            <% if (user) { %>
+                <span class="text-gray-600"><%= t('nav.welcome') %>, <%= user.username %></span>
+                <a href="/users/logout" class="text-gray-600 hover:text-blue-600"><%= t('nav.logout') %></a>
+            <% } else { %>
+                <a href="/users/login" class="text-gray-600 hover:text-blue-600"><%= t('nav.login') %></a>
+                <a href="/users/register" class="text-gray-600 hover:text-blue-600"><%= t('nav.register') %></a>
+            <% } %>
+            <!-- 语言切换 -->
+            <div class="relative group">
+                <button class="text-gray-600 hover:text-blue-600 flex items-center">
+                    <i class="fas fa-globe mr-1"></i> <%= t('language.' + currentLang) %>
+                    <i class="fas fa-chevron-down ml-1 text-xs"></i>
+                </button>
+                <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden group-hover:block z-10">
+                    <a href="/lang/zh" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-700"><%= t('language.zh') %></a>
+                    <a href="/lang/en" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-700"><%= t('language.en') %></a>
+                    <a href="/lang/fr" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-700"><%= t('language.fr') %></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

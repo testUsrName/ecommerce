@@ -1,12 +1,12 @@
-const Product = require('../models/product');
+import Product from '../models/product.js';
 
 // 显示商品上传表单
-exports.getUploadForm = (req, res) => {
+export const getUploadForm = (req, res) => {
   res.render('upload');
 };
 
 // 处理商品上传
-exports.uploadProduct = (req, res) => {
+export const uploadProduct = (req, res) => {
   const { name, model, description, price, quantity, notes } = req.body;
   const imageUrl = req.file ? '/uploads/' + req.file.filename : null;
   
