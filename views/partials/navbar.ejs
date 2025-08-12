@@ -16,13 +16,13 @@
             <!-- 语言切换 -->
             <div class="relative group">
                 <button class="text-gray-600 hover:text-blue-600 flex items-center">
-                    <i class="fas fa-globe mr-1"></i> <%= t('language.' + currentLang) %>
+                    <i class="fas fa-globe mr-1"></i> <%= currentLang === 'zh' ? '中文' : currentLang === 'en' ? 'English' : 'Français' %>
                     <i class="fas fa-chevron-down ml-1 text-xs"></i>
                 </button>
                 <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden group-hover:block z-10">
-                    <a href="/lang/zh" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-700"><%= t('language.zh') %></a>
-                    <a href="/lang/en" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-700"><%= t('language.en') %></a>
-                    <a href="/lang/fr" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-700"><%= t('language.fr') %></a>
+                    <a href="/lang/zh" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-700">中文</a>
+                    <a href="/lang/en" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-700">English</a>
+                    <a href="/lang/fr" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-700">Français</a>
                 </div>
             </div>
         </div>
