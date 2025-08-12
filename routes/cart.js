@@ -7,6 +7,11 @@ import path from 'path';
 import fs from 'fs';
 import { promisify } from 'util';
 import { jsPDF } from 'jspdf';
+import { fileURLToPath } from 'url';
+
+// 为ES模块模拟__dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 // 引入中文字体支持
 // 注意：在服务器端使用jsPDF时，字体配置需要特殊处理
 // 我们将在生成PDF时直接设置字体
@@ -74,10 +79,14 @@ router.post('/add', (req, res) => {
       // 获取备注信息
       const remark = req.body.remark || '';
 
-      // 更新数量和备注
+      // 更新数量、备注和描述
       req.session.cart[existingItemIndex].quantity += quantity;
       if (remark) {
         req.session.cart[existingItemIndex].remark = remark;
+      }
+      // 确保描述字段存在
+      if (!req.session.cart[existingItemIndex].hasOwnProperty('description')) {
+        req.session.cart[existingItemIndex].description = product.description || '';
       }
     } else {
       // 获取备注信息
@@ -91,6 +100,7 @@ router.post('/add', (req, res) => {
         price: product.price,
         quantity: quantity,
         image_url: product.image_url,
+        description: product.description || '',
         remark: remark
       });
     }
@@ -216,13 +226,17 @@ router.post('/generate-pdf', async (req, res) => {
       return total + (item.price * item.quantity);
     }, 0);
 
-    // 准备订单项数据
+    // 准备订单项数据，包含图片URL
+// 准备订单数据 - 包含备注字段
     const orderItems = req.session.cart.map(item => ({
       name: item.name,
       model: item.model,
       price: item.price,
       quantity: item.quantity,
-      subtotal: (item.price * item.quantity).toFixed(2)
+      subtotal: (item.subtotal || item.price * item.quantity).toFixed(2),
+      image_url: item.image_url,
+      description: item.description || '',
+      remark: item.remark // 包含备注字段
     }));
 
     // 创建PDF
@@ -248,39 +262,88 @@ router.post('/generate-pdf', async (req, res) => {
     // 添加表格标题
     doc.setFontSize(14);
     doc.text(req.t('pdf.productInfo'), 20, 60);
-    doc.text(req.t('pdf.unitPrice'), 100, 60);
-    doc.text(req.t('pdf.quantity'), 130, 60);
-    doc.text(req.t('pdf.subtotal'), 160, 60);
+    doc.text(req.t('pdf.unitPrice'), 120, 60);
+    doc.text(req.t('pdf.quantity'), 150, 60);
+    doc.text(req.t('pdf.subtotal'), 180, 60);
 
     // 添加表格分隔线
-    doc.line(20, 65, 190, 65);
+    doc.line(20, 65, 220, 65);
 
     // 添加商品列表
     doc.setFontSize(12);
     let yPosition = 75;
-    orderItems.forEach((item, index) => {
-      // 商品名称和型号
-      doc.text(`${index + 1}. ${item.name}`, 20, yPosition);
-      if (item.model) {
-        doc.text(`${req.t('pdf.model')}: ${item.model}`, 20, yPosition + 6);
-        yPosition += 12;
+    console.log('PDF生成前的订单商品数据:', orderItems); // 打印完整订单商品数据
+    for (const [index, item] of orderItems.entries()) {
+      // 商品图片
+      if (item.image_url) {
+        try {
+          // 确保正确处理Windows路径
+          const imageName = item.image_url.split('/').pop(); // 获取文件名
+          const imagePath = path.join(__dirname, '..', 'public', 'uploads', imageName);
+          // 读取图片并转换为base64（使用异步读取）
+          const imageData = await fs.promises.readFile(imagePath, { encoding: 'base64' });
+          // 检测图片格式
+          const imageFormat = imageName.split('.').pop().toLowerCase();
+          // 支持常见图片格式
+          const format = ['jpg', 'jpeg', 'png', 'gif'].includes(imageFormat) ? imageFormat.toUpperCase() : 'JPEG';
+          // 添加图片，设置宽度为30mm，高度自动
+          doc.addImage(`data:image/${imageFormat};base64,${imageData}`, format, 20, yPosition, 30, 0);
+        } catch (error) {
+          console.error('添加图片失败:', error);
+          // 如果图片加载失败，添加一个图标或文字提示
+          doc.text('图片加载失败', 20, yPosition + 15);
+        }
       } else {
-        yPosition += 6;
+        // 没有图片时，添加一个占位符文字
+        doc.text('无图片', 20, yPosition + 15);
+      }
+
+      // 商品名称和型号（右移以给图片腾出空间）
+      doc.text(`${index + 1}. ${item.name}`, 55, yPosition);
+      if (item.model) {
+        doc.text(`${req.t('pdf.model')}: ${item.model}`, 55, yPosition + 6);
+      }
+
+      // 描述（显示在型号下方）
+      const descriptionText = item.description || '-';
+      let descriptionHeight = 0;
+      if (descriptionText && descriptionText !== '-') {
+        doc.setFontSize(10); // 减小字体大小
+        const maxDescriptionWidth = 150; // 描述最大宽度
+        const descriptionLines = doc.splitTextToSize(`${req.t('pdf.description')}: ${descriptionText}`, maxDescriptionWidth);
+        doc.text(descriptionLines, 55, yPosition + 12);
+        descriptionHeight = descriptionLines.length * 5; // 每行约5mm
+        doc.setFontSize(12); // 恢复原来的字体大小
+      }
+
+      // 备注（显示在描述下方）
+      console.log('当前商品完整数据:', item); // 打印完整商品数据
+      const remarkText = item.remark || '-';
+      console.log('备注文本:', remarkText); // 调试信息
+      if (remarkText && remarkText !== '-') {
+        doc.setFontSize(10); // 减小字体大小
+        const maxRemarkWidth = 150; // 备注最大宽度
+        const remarkLines = doc.splitTextToSize(`${req.t('pdf.remark')}: ${remarkText}`, maxRemarkWidth);
+        console.log('拆分后的备注行数:', remarkLines.length); // 调试信息
+        doc.text(remarkLines, 55, yPosition + 12 + descriptionHeight);
+        doc.setFontSize(12); // 恢复原来的字体大小
       }
 
       // 单价、数量、小计
-      doc.text(`¥${item.price.toFixed(2)}`, 100, yPosition - 6);
-      doc.text(item.quantity.toString(), 130, yPosition - 6);
-      doc.text(`¥${item.subtotal}`, 160, yPosition - 6);
+      doc.text(`¥${item.price.toFixed(2)}`, 120, yPosition);
+      doc.text(item.quantity.toString(), 150, yPosition);
+      doc.text(`¥${item.subtotal}`, 180, yPosition);
 
-      yPosition += 10;
-    });
+      // 固定行高
+      yPosition += 40;
+      console.log('当前y位置:', yPosition); // 调试信息
+    }
 
     // 添加总计
-    doc.line(20, yPosition, 190, yPosition);
+    doc.line(20, yPosition, 220, yPosition);
     yPosition += 10;
     doc.setFontSize(14);
-    doc.text(`${req.t('pdf.total')}: ¥${totalAmount.toFixed(2)}`, 160, yPosition);
+    doc.text(`${req.t('pdf.total')}: ¥${totalAmount.toFixed(2)}`, 180, yPosition);
 
     // 添加页脚
     yPosition = doc.internal.pageSize.height - 20;

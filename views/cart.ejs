@@ -43,23 +43,37 @@
                     <table class="min-w-full divide-y divide-gray-200 w-full" style="width: 100%; table-layout: fixed;">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" style="width: 40%;"><%= t('cart.productInfo') %></th>
+                                <th scope="col" class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" style="width: 45%;"><%= t('cart.productInfo') %></th>
                                 <th scope="col" class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" style="width: 15%;"><%= t('cart.unitPrice') %></th>
-                                <th scope="col" class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" style="width: 20%;"><%= t('cart.quantity') %></th>
-                                <th scope="col" class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" style="width: 15%;"><%= t('cart.subtotal') %></th>
-                                <th scope="col" class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" style="width: 10%;"><%= t('cart.actions') %></th>
+                                <th scope="col" class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" style="width: 15%;"><%= t('cart.quantity') %></th>
+                                <th scope="col" class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" style="width: 10%;"><%= t('cart.subtotal') %></th>
+                                <th scope="col" class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" style="width: 15%;"><%= t('cart.actions') %></th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             <% cart.forEach((item, index) => { %>
                                 <tr class="<%= index % 2 === 0 ? 'bg-white' : 'bg-gray-50' %> hover:bg-gray-50 transition-all duration-300 border-b border-gray-100">
                                     <td class="px-4 py-4 whitespace-nowrap">
-                                        <div class="ml-2">
-                                            <div class="text-base font-medium text-gray-800"><%= item.name %></div>
-                                            <div class="text-sm text-gray-500"><%= item.model %></div>
-                                            <% if (item.remark) { %>
-                                                <div class="text-xs text-gray-400 mt-1"><i class="fas fa-comment-alt mr-1"></i> <%= item.remark %></div>
+                                        <div class="flex items-center">
+                                            <% if (item.image_url) { %>
+                                                <div class="flex-shrink-0 h-12 w-12 mr-3">
+                                                    <img class="h-12 w-12 object-cover rounded-md" src="<%= item.image_url %>" alt="<%= item.name %>">
+                                                </div>
+                                            <% } else { %>
+                                                <div class="flex-shrink-0 h-12 w-12 mr-3 bg-gray-100 rounded-md flex items-center justify-center">
+                                                    <i class="fas fa-box text-gray-400"></i>
+                                                </div>
                                             <% } %>
+                                            <div class="ml-0">
+                                                <div class="text-base font-medium text-gray-800"><%= item.name %></div>
+                                                <div class="text-sm text-gray-500"><%= item.model %></div>
+                                                <% if (item.description && item.description !== '') { %>
+                                                <div class="text-sm text-gray-600 mt-1 whitespace-pre-line" style="width: 100%; max-width: 100%; word-break: break-word;"><span class="font-medium"><%= t('cart.description') %>:</span> <%= item.description %></div>
+                                                <% } %>
+                                                <% if (item.remark && item.remark !== '') { %>
+                                                <div class="text-sm text-gray-600 mt-1 whitespace-pre-line" style="width: 100%; max-width: 100%; word-break: break-word;"><span class="font-medium"><%= t('cart.remark') %>:</span> <%= item.remark %></div>
+                                                <% } %>
+                                            </div>
                                         </div>
                                     </td>
                                     <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -79,6 +93,7 @@
                                     <td class="px-4 py-4 whitespace-nowrap text-sm font-bold text-blue-600">
                                         ¥<%= (item.price * item.quantity).toFixed(2) %>
                                     </td>
+
                                     <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                                         <button type="button" onclick="removeFromCart(<%= item.productId %>)" class="text-red-600 hover:text-red-800 border border-gray-300 px-3 py-1.5 rounded-md transition focus:outline-none focus:ring-2 focus:ring-red-500">
                                             <%= t('cart.remove') %>
