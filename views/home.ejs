@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>商品列表</title>
+    <title><%= t('productList.title') %></title>
     <!-- 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 Font Awesome -->
@@ -15,7 +15,7 @@
 
     <!-- 主内容区域 -->
     <main class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold mb-6 text-gray-800">商品列表</h1>
+        <h1 class="text-3xl font-bold mb-6 text-gray-800"><%= t('productList.header') %></h1>
 
         <!-- 消息提示区域 -->
         <% if (success_msg) { %>
@@ -33,7 +33,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             <% if (products.length === 0) { %>
                 <div class="col-span-full text-center py-10">
-                    <p class="text-gray-500 text-lg">暂无商品，请稍后再来查看</p>
+                    <p class="text-gray-500 text-lg"><%= t('productList.noProducts') %></p>
                 </div>
             <% } else { %>
                 <% products.forEach(product => { %>
@@ -56,23 +56,23 @@
                         </div>
                         <div class="p-4">
                             <h3 class="font-semibold text-lg mb-1"><%= product.name %></h3>
-                            <p class="text-gray-500 text-sm mb-2">型号: <%= product.model || '无' %></p>
+                            <p class="text-gray-500 text-sm mb-2"><%= t('productList.model') %>: <%= product.model || t('productList.none') %></p>
                             <div class="mt-4">
                                 <div class="flex items-center mb-2">
-                                    <span class="text-sm text-gray-500 mr-2">库存: <%= product.quantity %></span>
-                                    <span class="text-sm text-gray-500">购买数量:</span>
+                                    <span class="text-sm text-gray-500 mr-2"><%= t('productList.stock') %>: <%= product.quantity %></span>
+                                    <span class="text-sm text-gray-500"><%= t('productList.quantity') %>:</span>
                                     <input type="number" id="quantity-<%= product.id %>" value="1" min="1" max="<%= product.quantity %>" class="ml-2 w-16 border border-gray-300 rounded px-2 py-1 text-sm">
                                 </div>
                                 <div class="flex space-x-2 mb-2">
                                     <button onclick="addToCart(<%= product.id %>)" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 rounded transition">
-                                        <i class="fas fa-shopping-cart mr-1"></i> 添加到购物车
+                                        <i class="fas fa-shopping-cart mr-1"></i> <%= t('productList.addToCart') %>
                                     </button>
                                     <button onclick="openRemarkModal(<%= product.id %>)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm py-2 px-3 rounded transition">
-                                        <i class="fas fa-comment-alt mr-1"></i> 备注
+                                        <i class="fas fa-comment-alt mr-1"></i> <%= t('productList.remark') %>
                                     </button>
                                 </div>
                                 <a href="/products/<%= product.id %>" class="block text-center text-blue-600 hover:text-blue-800 text-sm font-medium mt-2">
-                                    <i class="fas fa-info-circle mr-1"></i> 查看详情
+                                    <i class="fas fa-info-circle mr-1"></i> <%= t('productList.viewDetails') %>
                                 </a>
                             </div>
                         </div>
@@ -86,19 +86,19 @@
     <div id="remarkModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-gray-800">添加备注</h3>
+                <h3 class="text-xl font-bold text-gray-800"><%= t('productList.addRemark') %></h3>
                 <button onclick="closeRemarkModal()" class="text-gray-500 hover:text-gray-700">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
             <input type="hidden" id="modalProductId">
             <div class="mb-4">
-                <label for="remarkText" class="block text-sm font-medium text-gray-700 mb-1">备注内容</label>
-                <textarea id="remarkText" rows="3" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="输入备注信息..."></textarea>
+                <label for="remarkText" class="block text-sm font-medium text-gray-700 mb-1"><%= t('productList.remarkContent') %></label>
+                <textarea id="remarkText" rows="3" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="<%= t('productList.remarkPlaceholder') %>"></textarea>
             </div>
             <div class="flex justify-end space-x-2">
-                <button onclick="closeRemarkModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded transition">取消</button>
-                <button onclick="saveRemark()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition">保存备注</button>
+                <button onclick="closeRemarkModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded transition"><%= t('productList.cancel') %></button>
+                <button onclick="saveRemark()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"><%= t('productList.saveRemark') %></button>
             </div>
         </div>
     </div>

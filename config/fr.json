@@ -9,13 +9,79 @@
     "logout": "Déconnexion",
     "upload": "Télécharger un produit",
     "orders": "Mes commandes",
-    "welcome": "Bienvenue"
+    "welcome": "Bienvenue",
+    "siteName": "E-commerce"
+  },
+  "login": {
+    "title": "Connexion",
+    "header": "Connexion",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "submit": "Se connecter",
+    "noAccount": "Pas de compte?",
+    "registerLink": "S'inscrire"
+  },
+  "register": {
+    "title": "Inscription",
+    "header": "Inscription",
+    "username": "Nom d'utilisateur",
+    "email": "Email",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "submit": "S'inscrire",
+    "hasAccount": "Vous avez déjà un compte?",
+    "loginLink": "Se connecter"
   },
   "header": {
     "welcome": "Bienvenue dans notre magasin"
   },
   "footer": {
     "copyright": "Site de commerce électronique. Tous droits réservés."
+  },
+  "cart": {
+    "title": "Panier",
+    "header": "Panier",
+    "emptyTitle": "Panier vide",
+    "emptyMessage": "Il n'y a pas de produits dans votre panier",
+    "shopNow": "Commencer les achats",
+    "productInfo": "Informations sur le produit",
+    "unitPrice": "Prix unitaire",
+    "quantity": "Quantité",
+    "subtotal": "Sous-total",
+    "actions": "Actions",
+    "remove": "Supprimer",
+    "clearCart": "Vider le panier",
+    "continueShopping": "Continuer les achats",
+    "total": "Total",
+    "generateOrder": "Générer la commande"
+  },
+  "productList": {
+    "title": "Liste des produits",
+    "header": "Liste des produits",
+    "noProducts": "Aucun produit disponible, veuillez vérifier plus tard",
+    "model": "Modèle",
+    "none": "Aucun",
+    "stock": "Stock",
+    "quantity": "Quantité",
+    "addToCart": "Ajouter au panier",
+    "remark": "Remarque",
+    "viewDetails": "Voir les détails",
+    "addRemark": "Ajouter une remarque",
+    "remarkContent": "Contenu de la remarque",
+    "remarkPlaceholder": "Entrez les informations de remarque...",
+    "cancel": "Annuler",
+    "saveRemark": "Enregistrer la remarque"
+  },
+  "productDetail": {
+    "title": "{{name}}",
+    "model": "Modèle",
+    "description": "Description du produit",
+    "notes": "Notes",
+    "none": "Aucun",
+    "stock": "Stock",
+    "quantity": "Quantité",
+    "addToCart": "Ajouter au panier",
+    "soldOut": "Épuisé"
   },
   "language": {
     "zh": "Chinois",

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>购物车</title>
+    <title><%= t('cart.title') %></title>
     <!-- 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 Font Awesome -->
@@ -14,7 +14,7 @@
 
     <!-- 主内容区域 -->
     <main class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold mb-6 text-gray-800">购物车</h1>
+        <h1 class="text-3xl font-bold mb-6 text-gray-800"><%= t('cart.header') %></h1>
 
         <!-- 消息提示区域 -->
         <% if (success_msg) { %>
@@ -31,10 +31,10 @@
         <% if (typeof cart === 'undefined' || cart.length === 0) { %>
             <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8 text-center">
                 <i class="fas fa-shopping-cart text-6xl text-gray-300 mb-4"></i>
-                <h3 class="text-xl font-semibold mb-2">购物车为空</h3>
-                <p class="text-gray-500 mb-6">您的购物车中没有商品</p>
+                <h3 class="text-xl font-semibold mb-2"><%= t('cart.emptyTitle') %></h3>
+                <p class="text-gray-500 mb-6"><%= t('cart.emptyMessage') %></p>
                 <a href="/" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md transition inline-block">
-                    去购物
+                    <%= t('cart.shopNow') %>
                 </a>
             </div>
         <% } else { %>
@@ -43,11 +43,11 @@
                     <table class="min-w-full divide-y divide-gray-200 w-full" style="width: 100%; table-layout: fixed;">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" style="width: 40%;">商品信息</th>
-                                <th scope="col" class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" style="width: 15%;">单价</th>
-                                <th scope="col" class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" style="width: 20%;">数量</th>
-                                <th scope="col" class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" style="width: 15%;">小计</th>
-                                <th scope="col" class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" style="width: 10%;">操作</th>
+                                <th scope="col" class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" style="width: 40%;"><%= t('cart.productInfo') %></th>
+                                <th scope="col" class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" style="width: 15%;"><%= t('cart.unitPrice') %></th>
+                                <th scope="col" class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" style="width: 20%;"><%= t('cart.quantity') %></th>
+                                <th scope="col" class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" style="width: 15%;"><%= t('cart.subtotal') %></th>
+                                <th scope="col" class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" style="width: 10%;"><%= t('cart.actions') %></th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -81,7 +81,7 @@
                                     </td>
                                     <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                                         <button type="button" onclick="removeFromCart(<%= item.productId %>)" class="text-red-600 hover:text-red-800 border border-gray-300 px-3 py-1.5 rounded-md transition focus:outline-none focus:ring-2 focus:ring-red-500">
-                                            移除
+                                            <%= t('cart.remove') %>
                                         </button>
                                     </td>
                                 </tr>
@@ -94,18 +94,18 @@
             <div class="bg-white rounded-lg shadow-md p-6 flex flex-col md:flex-row justify-between items-start md:items-center border border-gray-200 hover:shadow-lg transition">
                 <div class="flex space-x-4 mb-4 md:mb-0">
                     <button type="button" onclick="clearCart()" class="inline-flex items-center px-4 py-2 text-red-600 hover:text-red-800 border border-gray-300 rounded-md transition focus:outline-none focus:ring-2 focus:ring-red-500">
-                        <i class="fas fa-trash-alt mr-2"></i> 清空购物车
+                        <i class="fas fa-trash-alt mr-2"></i> <%= t('cart.clearCart') %>
                     </button>
                     <a href="/" class="inline-flex items-center px-4 py-2 text-green-600 hover:text-green-800 border border-gray-300 rounded-md transition focus:outline-none focus:ring-2 focus:ring-green-500">
-                        <i class="fas fa-shopping-bag mr-2"></i> 继续购物
+                        <i class="fas fa-shopping-bag mr-2"></i> <%= t('cart.continueShopping') %>
                     </a>
                 </div>
                 <div class="text-right">
                     <p class="text-xl font-bold text-gray-900 mb-3">
-                        总计: <span class="text-2xl text-blue-600">¥<%= cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2) %></span>
+                        <%= t('cart.total') %>:  <span class="text-2xl text-blue-600">¥<%= cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2) %></span>
                     </p>
                     <button type="button" onclick="generateOrder()" class="inline-flex items-center px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm font-medium">
-                        <i class="fas fa-file-invoice mr-2"></i> 生成订单
+                        <i class="fas fa-file-invoice mr-2"></i> <%= t('cart.generateOrder') %>
                     </button>
                 </div>
             </div>

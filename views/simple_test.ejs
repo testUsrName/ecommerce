@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= product.name %> - 商品详情</title>
+    <title><%= product.name %> - <%= t('productDetail.title') %></title>
     <!-- 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 Font Awesome -->
@@ -11,23 +11,7 @@
 </head>
 <body class="bg-gray-100 min-h-screen">
     <!-- 导航栏 -->
-    <nav class="bg-white shadow-md">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="/" class="text-xl font-bold text-blue-600">电商网站</a>
-            <div class="flex space-x-4">
-                <a href="/upload" class="text-gray-600 hover:text-blue-600">上传商品</a>
-                <a href="/cart" class="text-gray-600 hover:text-blue-600">购物车</a>
-                <a href="/orders" class="text-gray-600 hover:text-blue-600">我的订单</a>
-                <% if (user) { %>
-                    <span class="text-gray-600">欢迎, <%= user.username %></span>
-                    <a href="/users/logout" class="text-gray-600 hover:text-blue-600">退出</a>
-                <% } else { %>
-                    <a href="/users/login" class="text-gray-600 hover:text-blue-600">登录</a>
-                    <a href="/users/register" class="text-gray-600 hover:text-blue-600">注册</a>
-                <% } %>
-            </div>
-        </div>
-    </nav>
+    <%- include('partials/navbar') %>
 
     <!-- 主内容区域 -->
     <main class="container mx-auto px-4 py-8">
@@ -47,26 +31,26 @@
                 <!-- 商品信息 -->
                 <div>
                     <h1 class="text-3xl font-bold mb-3 text-gray-800"><%= product.name %></h1>
-                    <p class="text-gray-500 text-lg mb-4">型号: <%= product.model || '无' %></p>
+                    <p class="text-gray-500 text-lg mb-4"><%= t('productDetail.model') %>: <%= product.model || t('productDetail.none') %></p>
                     <div class="mb-6">
                         <span class="text-2xl font-bold text-red-600">¥<%= product.price.toFixed(2) %></span>
-                        <span class="text-gray-500 ml-2">库存: <%= product.quantity %></span>
+                        <span class="text-gray-500 ml-2"><%= t('productDetail.stock') %>: <%= product.quantity %></span>
                     </div>
                     <div class="mb-6">
-                        <h2 class="text-lg font-semibold mb-2 text-gray-800">商品描述</h2>
+                        <h2 class="text-lg font-semibold mb-2 text-gray-800"><%= t('productDetail.description') %></h2>
                         <p class="text-gray-600"><%= product.description %></p>
                     </div>
                     <div class="mb-6">
-                        <h2 class="text-lg font-semibold mb-2 text-gray-800">商品备注</h2>
-                        <p class="text-gray-600"><%= product.notes || '无' %></p>
+                        <h2 class="text-lg font-semibold mb-2 text-gray-800"><%= t('productDetail.notes') %></h2>
+                        <p class="text-gray-600"><%= product.notes || t('productDetail.none') %></p>
                     </div>
                     <div class="flex space-x-4 mt-8">
                         <div class="flex items-center">
-                            <span class="text-gray-600 mr-2">购买数量:</span>
+                            <span class="text-gray-600 mr-2"><%= t('productDetail.quantity') %>:</span>
                             <input type="number" id="quantity" value="1" min="1" max="<%= product.quantity %>" class="w-16 border border-gray-300 rounded px-2 py-1 text-sm">
                         </div>
                         <button onclick="addToCart(<%= product.id %>)" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition">
-                            <i class="fas fa-shopping-cart mr-1"></i> 添加到购物车
+                            <i class="fas fa-shopping-cart mr-1"></i> <%= t('productDetail.addToCart') %>
                         </button>
                     </div>
                 </div>
@@ -101,10 +85,6 @@
     </script>
 
     <!-- 页脚 -->
-    <footer class="bg-white shadow-inner py-6 mt-10">
-        <div class="container mx-auto px-4 text-center text-gray-600">
-            <p>&copy; 2023 电商网站. 保留所有权利.</p>
-        </div>
-    </footer>
+    <%- include('partials/footer') %>
 </body>
 </html>

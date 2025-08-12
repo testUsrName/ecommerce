@@ -6,7 +6,7 @@ import ejs from 'ejs';
 import path from 'path';
 import fs from 'fs';
 import { promisify } from 'util';
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 // 引入中文字体支持
 // 注意：在服务器端使用jsPDF时，字体配置需要特殊处理
 // 我们将在生成PDF时直接设置字体

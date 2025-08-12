@@ -9,13 +9,79 @@
     "logout": "退出",
     "upload": "上传商品",
     "orders": "我的订单",
-    "welcome": "欢迎"
+    "welcome": "欢迎",
+    "siteName": "电商网站"
+  },
+  "login": {
+    "title": "登录",
+    "header": "登录",
+    "username": "用户名",
+    "password": "密码",
+    "submit": "登录",
+    "noAccount": "还没有账号?",
+    "registerLink": "注册"
+  },
+  "register": {
+    "title": "注册",
+    "header": "注册",
+    "username": "用户名",
+    "email": "邮箱",
+    "password": "密码",
+    "confirmPassword": "确认密码",
+    "submit": "注册",
+    "hasAccount": "已有账号?",
+    "loginLink": "登录"
   },
   "header": {
     "welcome": "欢迎来到我们的商店"
   },
   "footer": {
     "copyright": "电商网站. 保留所有权利."
+  },
+  "cart": {
+    "title": "购物车",
+    "header": "购物车",
+    "emptyTitle": "购物车为空",
+    "emptyMessage": "您的购物车中没有商品",
+    "shopNow": "去购物",
+    "productInfo": "商品信息",
+    "unitPrice": "单价",
+    "quantity": "数量",
+    "subtotal": "小计",
+    "actions": "操作",
+    "remove": "移除",
+    "clearCart": "清空购物车",
+    "continueShopping": "继续购物",
+    "total": "总计",
+    "generateOrder": "生成订单"
+  },
+  "productList": {
+    "title": "商品列表",
+    "header": "商品列表",
+    "noProducts": "暂无商品，请稍后再来查看",
+    "model": "型号",
+    "none": "无",
+    "stock": "库存",
+    "quantity": "购买数量",
+    "addToCart": "添加到购物车",
+    "remark": "备注",
+    "viewDetails": "查看详情",
+    "addRemark": "添加备注",
+    "remarkContent": "备注内容",
+    "remarkPlaceholder": "输入备注信息...",
+    "cancel": "取消",
+    "saveRemark": "保存备注"
+  },
+  "productDetail": {
+    "title": "{{name}}",
+    "model": "型号",
+    "description": "商品描述",
+    "notes": "备注",
+    "none": "无",
+    "stock": "库存",
+    "quantity": "数量",
+    "addToCart": "加入购物车",
+    "soldOut": "已售罄"
   },
   "language": {
     "zh": "中文",

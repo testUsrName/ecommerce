@@ -20,8 +20,13 @@ router.get('/:id', (req, res) => {
         console.log('成功获取商品详情:', product);
 
         // 使用ejs.renderFile渲染简化的模板
+        // 在Windows系统上正确处理路径
+        const __filename = new URL(import.meta.url).pathname;
+        // 移除Windows路径中可能的额外斜杠
+        const normalizedFilename = __filename.replace(/^\/([A-Za-z]:)/, '$1');
+        const __dirname = path.dirname(normalizedFilename);
         const templatePath = path.join(__dirname, '../views', 'simple_test.ejs');
-        ejs.renderFile(templatePath, { product: product, user: req.user }, (err, html) => {
+        ejs.renderFile(templatePath, { product: product, user: req.user, t: req.t, currentLang: req.locale || 'zh' }, (err, html) => {
             if (err) {
                 console.error('EJS模板错误，请求路径:', req.path, '错误:', err);
                 return res.status(500).json({ error: '渲染模板失败' });

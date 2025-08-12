@@ -9,13 +9,79 @@
     "logout": "Logout",
     "upload": "Upload Product",
     "orders": "My Orders",
-    "welcome": "Welcome"
+    "welcome": "Welcome",
+    "siteName": "E-commerce Website"
+  },
+  "login": {
+    "title": "Login",
+    "header": "Login",
+    "username": "Username",
+    "password": "Password",
+    "submit": "Login",
+    "noAccount": "Don't have an account?",
+    "registerLink": "Register"
+  },
+  "register": {
+    "title": "Register",
+    "header": "Register",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "submit": "Register",
+    "hasAccount": "Already have an account?",
+    "loginLink": "Login"
   },
   "header": {
     "welcome": "Welcome to our store"
   },
   "footer": {
     "copyright": "E-commerce Website. All rights reserved."
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "header": "Shopping Cart",
+    "emptyTitle": "Cart is Empty",
+    "emptyMessage": "There are no products in your cart",
+    "shopNow": "Start Shopping",
+    "productInfo": "Product Information",
+    "unitPrice": "Unit Price",
+    "quantity": "Quantity",
+    "subtotal": "Subtotal",
+    "actions": "Actions",
+    "remove": "Remove",
+    "clearCart": "Clear Cart",
+    "continueShopping": "Continue Shopping",
+    "total": "Total",
+    "generateOrder": "Generate Order"
+  },
+  "productList": {
+    "title": "Product List",
+    "header": "Product List",
+    "noProducts": "No products available, please check back later",
+    "model": "Model",
+    "none": "None",
+    "stock": "Stock",
+    "quantity": "Quantity",
+    "addToCart": "Add to Cart",
+    "remark": "Remark",
+    "viewDetails": "View Details",
+    "addRemark": "Add Remark",
+    "remarkContent": "Remark Content",
+    "remarkPlaceholder": "Enter remark information...",
+    "cancel": "Cancel",
+    "saveRemark": "Save Remark"
+  },
+  "productDetail": {
+    "title": "{{name}}",
+    "model": "Model",
+    "description": "Product Description",
+    "notes": "Notes",
+    "none": "None",
+    "stock": "Stock",
+    "quantity": "Quantity",
+    "addToCart": "Add to Cart",
+    "soldOut": "Sold Out"
   },
   "language": {
     "zh": "Chinese",

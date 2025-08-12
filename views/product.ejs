@@ -1,5 +1,5 @@
 <%- include('layout', { 
-    title: product.name,
+    title: '<%= t('productDetail.title', { name: product.name }) %>',
     body: `
         <div class="bg-white rounded-lg shadow-md overflow-hidden">
             <div class="md:flex">
@@ -14,22 +14,22 @@
                 </div>
                 <div class="md:w-1/2 p-6">
                     <h1 class="text-2xl font-bold mb-2"><%= product.name %></h1>
-                    <p class="text-gray-600 mb-4">型号: <%= product.model || '无' %></p>
+                    <p class="text-gray-600 mb-4"><%= t('productDetail.model') %>: <%= product.model || t('productDetail.none') %></p>
                     <div class="text-3xl font-bold text-blue-600 mb-6">¥<%= product.price.toFixed(2) %></div>
                     
                     <div class="mb-6">
-                        <h2 class="text-lg font-semibold mb-2">商品描述</h2>
-                        <p class="text-gray-700 whitespace-pre-line"><%= product.description || '无' %></p>
+                        <h2 class="text-lg font-semibold mb-2"><%= t('productDetail.description') %></h2>
+                        <p class="text-gray-700 whitespace-pre-line"><%= product.description || t('productDetail.none') %></p>
                     </div>
                     
                     <div class="mb-6">
-                        <h2 class="text-lg font-semibold mb-2">备注</h2>
-                        <p class="text-gray-700 whitespace-pre-line"><%= product.notes || '无' %></p>
+                        <h2 class="text-lg font-semibold mb-2"><%= t('productDetail.notes') %></h2>
+                        <p class="text-gray-700 whitespace-pre-line"><%= product.notes || t('productDetail.none') %></p>
                     </div>
                     
                     <div class="mb-6">
                         <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-medium text-gray-700">
-                            库存: <%= product.quantity %>
+                            <%= t('productDetail.stock') %>: <%= product.quantity %>
                         </span>
                     </div>
                     
@@ -37,17 +37,17 @@
                         <form action="/cart/add" method="POST" class="flex items-center">
                             <input type="hidden" name="productId" value="<%= product.id %>">
                             <div class="mr-4">
-                                <label for="quantity" class="block text-sm font-medium text-gray-700 mb-1">数量</label>
+                                <label for="quantity" class="block text-sm font-medium text-gray-700 mb-1"><%= t('productDetail.quantity') %></label>
                                 <input type="number" id="quantity" name="quantity" value="1" min="1" max="<%= product.quantity %>" 
                                     class="w-20 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
                             </div>
                             <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md transition">
-                                <i class="fas fa-shopping-cart mr-2"></i>加入购物车
+                                <i class="fas fa-shopping-cart mr-2"></i><%= t('productDetail.addToCart') %>
                             </button>
                         </form>
                     <% } else { %>
                         <button disabled class="bg-gray-400 text-white px-6 py-2 rounded-md cursor-not-allowed">
-                            <i class="fas fa-exclamation-circle mr-2"></i>已售罄
+                            <i class="fas fa-exclamation-circle mr-2"></i><%= t('productDetail.soldOut') %>
                         </button>
                     <% } %>
                 </div>
