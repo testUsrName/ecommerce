@@ -1,5 +1,5 @@
 <!-- 导航栏 -->
-<nav class="bg-white shadow-md">
+<nav class="bg-white shadow-md" id="main-nav">
     <div class="container mx-auto px-4 py-3 flex justify-between items-center">
         <a href="/" class="text-xl font-bold text-blue-600"><%= t('nav.siteName') %></a>
         <div class="flex space-x-4">
@@ -14,17 +14,61 @@
                 <a href="/users/register" class="text-gray-600 hover:text-blue-600"><%= t('nav.register') %></a>
             <% } %>
             <!-- 语言切换 -->
-            <div class="relative group">
-                <button class="text-gray-600 hover:text-blue-600 flex items-center">
+            <div class="relative group" id="language-selector">
+                <button class="text-gray-600 hover:text-blue-600 flex items-center py-2 px-1">
                     <i class="fas fa-globe mr-1"></i> <%= currentLang === 'zh' ? '中文' : currentLang === 'en' ? 'English' : 'Français' %>
                     <i class="fas fa-chevron-down ml-1 text-xs"></i>
                 </button>
-                <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden group-hover:block z-10">
+                <div class="absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg py-1 hidden group-hover:block z-50" id="language-dropdown">
                     <a href="/lang/zh" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-700">中文</a>
                     <a href="/lang/en" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-700">English</a>
                     <a href="/lang/fr" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-700">Français</a>
                 </div>
             </div>
+            <script>
+                // 语言选择器增强交互
+                const languageSelector = document.getElementById('language-selector');
+                const languageDropdown = document.getElementById('language-dropdown');
+                let hideTimeout;
+
+                // 显示下拉菜单
+                function showDropdown() {
+                    clearTimeout(hideTimeout);
+                    languageDropdown.classList.remove('hidden');
+                }
+
+                // 隐藏下拉菜单（带延迟）
+                function hideDropdown() {
+                    hideTimeout = setTimeout(() => {
+                        languageDropdown.classList.add('hidden');
+                    }, 300);
+                }
+
+                // 为选择器添加事件监听
+                if (languageSelector && languageDropdown) {
+                    // 鼠标移入时显示菜单
+                    languageSelector.addEventListener('mouseenter', showDropdown);
+
+                    // 鼠标移出时延迟隐藏菜单
+                    languageSelector.addEventListener('mouseleave', hideDropdown);
+
+                    // 点击按钮切换菜单显示状态
+                    languageSelector.querySelector('button').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (languageDropdown.classList.contains('hidden')) {
+                            showDropdown();
+                        } else {
+                            clearTimeout(hideTimeout);
+                            languageDropdown.classList.add('hidden');
+                        }
+                    });
+
+                    // 点击页面其他地方关闭菜单
+                    document.addEventListener('click', () => {
+                        hideDropdown();
+                    });
+                }
+            </script>
         </div>
     </div>
 </nav>
