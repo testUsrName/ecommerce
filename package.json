@@ -6,7 +6,13 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "stop": "node stop-server.js",
+    "restart": "node restart-server.js",
+    "linux:stop": "node stop-server-linux.js",
+    "linux:restart": "node restart-server-linux.js",
+    "linux:force-stop": "./force-stop-server-linux.sh",
+    "linux:reliable-restart": "./reliable-restart-server-linux.sh"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

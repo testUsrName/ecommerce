@@ -92,9 +92,6 @@ app.get('/lang/:locale', (req, res) => {
   res.redirect('back');
 });
 
-// i18n中间件
-app.use(i18n.init);
-
 // 手动添加i18n的t函数到请求对象
 app.use(function(req, res, next) {
   if (!req.t) {
@@ -137,14 +134,65 @@ function isAuthenticated(req, res, next) {
   if (req.session.user) {
     return next();
   }
-  req.flash('error_msg', '请先登录');
+  req.flash('error_msg', req.t('auth.required'));
   res.redirect('/users/login');
 }
 
 // 启动服务器
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`服务器运行在 http://localhost:${PORT}`);
 });
+
+// 全局未捕获异常处理
+process.on('uncaughtException', (err) => {
+  console.error('未捕获的异常:', err);
+  // 可以在这里添加日志记录、报警等操作
+  // 对于严重错误，可能需要重启服务
+  // 但先尝试优雅关闭
+  server.close(() => {
+    process.exit(1);
+  });
+});
+
+// 全局未处理Promise拒绝处理
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('未处理的Promise拒绝:', reason, promise);
+  // 同样可以添加日志记录、报警等操作
+});
+
+// 处理SIGTERM和SIGINT信号，实现优雅关闭
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
+
+function gracefulShutdown() {
+  console.log('开始优雅关闭服务器...');
+  
+  // 首先关闭服务器，停止接受新请求
+  server.close(() => {
+    console.log('HTTP服务器已关闭');
+    
+    // 然后关闭数据库连接
+    try {
+      db.close((err) => {
+        if (err) {
+          console.error('关闭数据库连接出错:', err.message);
+          process.exit(1);
+        }
+        console.log('数据库连接已关闭');
+        process.exit(0);
+      });
+    } catch (dbErr) {
+      console.error('关闭数据库连接时发生异常:', dbErr);
+      process.exit(1);
+    }
+  });
+
+  // 设置超时，如果10秒内没有关闭，则强制退出
+  setTimeout(() => {
+    console.error('强制关闭服务器');
+    process.exit(1);
+  }, 10000);
+}
 
 // 自定义EJS模板编译错误处理中间件
 import ejs from 'ejs';

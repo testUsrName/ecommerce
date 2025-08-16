@@ -220,7 +220,6 @@ router.post('/generate-pdf', async (req, res) => {
     }
     console.log('用户已登录:', req.session.user.username);
 
-  try {
     // 计算总金额
     const totalAmount = req.session.cart.reduce((total, item) => {
       return total + (item.price * item.quantity);
@@ -359,10 +358,6 @@ router.post('/generate-pdf', async (req, res) => {
       const encodedFilename = encodeURIComponent(req.t('pdf.order')) + '_' + Date.now() + '.pdf';
       res.setHeader('Content-Disposition', `attachment; filename="${encodedFilename}"; filename*=UTF-8''${encodedFilename}`);
       res.send(Buffer.from(pdfBytes));
-    } catch (error) {
-      console.error('生成PDF失败:', error);
-      res.status(500).json({ success: false, message: '生成PDF失败，请稍后再试' });
-    }
     } catch (error) {
       console.error('生成PDF失败:', error);
       res.status(500).json({ success: false, message: '生成PDF失败，请稍后再试' });
